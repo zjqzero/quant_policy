@@ -1,0 +1,21 @@
+jupyter_notebook:
+    image: zjqzero/jupyter-notebook
+    restart: always
+    ports:
+      - 8888:8888
+    volumes: 
+      - /home/zhou/Test/iquant/notebooks:/notebooks
+      - /home/zhou/Test/iquant/quant_policy:/quant_policy
+      - /home/zhou/Test/iquant/key.pem:/key.pem
+    environment:
+      - PYTHONPATH=/quant_policy
+      - PASSWORD=
+    links:
+      - mongo
+
+mongo:
+    image: mongo:3.2
+    restart: always
+    volumes:
+      - /home/zhou/Test/mongo:/mongo
+
