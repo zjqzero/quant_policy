@@ -107,3 +107,10 @@ def level2(location, ktype, key, stocks=None):
 
 def level3(location, ktype, key, stocks=None):
     return trend(location, ktype, key, '3', stocks)
+
+
+def get_price(wind_code, ktype, key, n=15):
+    collection = client.chan.chankline
+    condition = {'windCode': wind_code, 'ktype': ktype}
+    cur = collection.find(condition).sort('index', pymongo.ASCENDING).limit(n)
+    return [getattr(ChanKline(e), 'kline').close for e in cur]

@@ -1,6 +1,6 @@
 # coding:utf-8
 
-from query import chan_k, original_k, fractal, bi, duan, level1, level2, level3, centre
+from query import chan_k, original_k, fractal, bi, duan, level1, level2, level3, centre, get_price
 
 # all_stocks = {'600000.SH', '603009.SH', '002751.SZ', '600006.SH', '300055.SZ', '600054.SH'}
 
@@ -54,10 +54,14 @@ from query import chan_k, original_k, fractal, bi, duan, level1, level2, level3,
 
 # 过滤比趋势背离，日级别
 # stock1 = bi(0, '2_1', 'ratio') < bi(-2, '2_1', 'ratio')
-stock2 = bi(0, '2_1', 'shaped_high') < bi(-2, '2_1', 'shaped_high')
-stock3 = bi(0, '2_1', 'shaped_low') < bi(-2, '2_1', 'shaped_low')
+# stock2 = bi(0, '2_1', 'shaped_high') < bi(-2, '2_1', 'shaped_high')
+# stock3 = bi(0, '2_1', 'shaped_low') < bi(-2, '2_1', 'shaped_low')
 # stock4 = (bi(-2, '2_1', 'ratio') / bi(0, '2_1', 'ratio')) >= 1.3
-stock5 = bi(0, '2_1', 'direction') == -1
-stock6 = bi(0, '2_1', 'count_fractal') > bi(-2, '2_1', 'count_fractal')
+# stock5 = bi(0, '2_1', 'direction') == -1
+# stock6 = bi(0, '2_1', 'count_fractal') > bi(-2, '2_1', 'count_fractal')
+#
+# print stock6 & stock2 & stock3 & stock5
 
-print stock6 & stock2 & stock3 & stock5
+# 600000 13年8月1号的收盘价跟行情软件不一致
+
+print get_price('600000.SH', '2_1', 'close', 733)

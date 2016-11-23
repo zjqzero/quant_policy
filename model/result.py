@@ -8,7 +8,8 @@ OP_DICT = {
     '<': operator.lt,
     '>=': operator.ge,
     '<=': operator.le,
-    '/': operator.div
+    '/': operator.div,
+    '*': operator.mul
 }
 
 
