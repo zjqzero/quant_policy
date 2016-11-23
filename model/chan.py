@@ -156,6 +156,11 @@ class Trend(Base):
         #     self.ratio = (self.high - self.low) / float(self.low)
         # else:
         #     self.ratio = (self.high - self.low) / float(self.high)
+        self.count_kline = len(self.chankline_index_list)
+        self.count_fractal = len(self.fractal_index_list)
+        # count_subtrend todo:
+        self.count_subtrend = len(self.subtrend_index_dict.get('-1', []))
+        self.ratio = (self.shaped_high - self.shaped_low) / self.count_kline
         self.start_chan_k = self.chankline_index_list[0]
         self.end_chan_k = self.chankline_index_list[-1]
 

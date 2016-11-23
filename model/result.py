@@ -7,7 +7,8 @@ OP_DICT = {
     '>': operator.gt,
     '<': operator.lt,
     '>=': operator.ge,
-    '<=': operator.le
+    '<=': operator.le,
+    '/': operator.div
 }
 
 
@@ -38,6 +39,9 @@ class Result(object):
 
     def __le__(self, other):
         return self.compare(other, '<=')
+
+    def __div__(self, other):
+        return self.compare(other, '/')
 
     def __and__(self, other):
         if isinstance(other, Result):
