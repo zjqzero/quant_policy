@@ -1,5 +1,7 @@
 # coding:utf-8
 import pymongo
+import numpy as np
+import talib as ta
 from database import client
 from model.chan import ChanKline, Trend, Centre, Fractal
 from model.result import Result
@@ -109,8 +111,38 @@ def level3(location, ktype, key, stocks=None):
     return trend(location, ktype, key, '3', stocks)
 
 
-def get_price(wind_code, ktype, key, n=15):
+# def history(wind_code, ktype, key, start=0, end=None):
+#     collection = client.chan.chankline
+#     condition = {'windCode': wind_code, 'ktype': ktype}
+#     if not end:
+#         end = collection.find(condition).count()
+#     else:
+#         end = collection.find(condition).count() + end
+#     condition.update({'index': {'$gte': start}})
+#     cur = collection.find(condition).sort('index', pymongo.ASCENDING).limit(end - start)
+#     return np.array([getattr(ChanKline(e), 'kline')[key] for e in cur])
+
+
+def history(wind_codes, ktype, key, start=0, end=None):
+    if isinstance(wind_codes, str):
+        wind_codes = [wind_codes]
     collection = client.chan.chankline
-    condition = {'windCode': wind_code, 'ktype': ktype}
-    cur = collection.find(condition).sort('index', pymongo.ASCENDING).limit(n)
-    return [getattr(ChanKline(e), 'kline').close for e in cur]
+    ret = {}
+    for wind_code in wind_codes:
+        condition = {'windCode': wind_code, 'ktype': ktype}
+        if not end:
+            end = collection.find(condition).count()
+        else:
+            end = collection.find(condition).count() + end
+        condition.update({'index': {'$gte': start}})
+        cur = collection.find(condition).sort('index', pymongo.ASCENDING).limit(end - start)
+        ret[wind_code] = np.array([getattr(ChanKline(e), 'kline')[key] for e in cur])
+    return Result(ret)
+
+
+def std(stocks, time_period):
+    return Result({k: ta.STDDEV(v, timeperiod=time_period) for k, v in stocks.items})
+
+
+def mean(stocks, time_period):
+    return Result({k: ta.MA(v, timeperiod=time_period) for k, v in stocks.items})

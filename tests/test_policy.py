@@ -1,6 +1,7 @@
 # coding:utf-8
-
-from query import chan_k, original_k, fractal, bi, duan, level1, level2, level3, centre, get_price
+import talib as ta
+import numpy as np
+from query import chan_k, original_k, fractal, bi, duan, level1, level2, level3, centre, history, std, mean
 
 # all_stocks = {'600000.SH', '603009.SH', '002751.SZ', '600006.SH', '300055.SZ', '600054.SH'}
 
@@ -64,4 +65,14 @@ from query import chan_k, original_k, fractal, bi, duan, level1, level2, level3,
 
 # 600000 13年8月1号的收盘价跟行情软件不一致
 
-print get_price('600000.SH', '2_1', 'close', 733)
+p1 = history('600000.SH', '2_1', 'close', end=-1)
+p2 = history('600000.SH', '2_1', 'close', start=1)
+s = p2 / p1
+# v = history('600000.SH', '2_1', 'volume', 733)
+
+st = std(s, time_period=100)
+mn = mean(s, time_period=100)
+
+print s > mn + st * 3
+# std_p = ta.STDDEV(p, timeperiod=100)
+# std_v = ta.STDDEV(v, timeperiod=100)
