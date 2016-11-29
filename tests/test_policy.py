@@ -2,7 +2,7 @@
 import talib as ta
 import numpy as np
 from query import chan_k, original_k, fractal, bi, duan, level1, level2, level3, centre, history, std, mean
-
+from model.result import Result
 # all_stocks = {'600000.SH', '603009.SH', '002751.SZ', '600006.SH', '300055.SZ', '600054.SH'}
 
 # print fractal(-1, '2_1', 'fractal_flag', stocks=all_stocks) < 0
@@ -65,14 +65,28 @@ from query import chan_k, original_k, fractal, bi, duan, level1, level2, level3,
 
 # 600000 13年8月1号的收盘价跟行情软件不一致
 
-p1 = history('600000.SH', '2_1', 'close', end=-1)
-p2 = history('600000.SH', '2_1', 'close', start=1)
-s = p2 / p1
-# v = history('600000.SH', '2_1', 'volume', 733)
-
-st = std(s, time_period=100)
-mn = mean(s, time_period=100)
-
-print s > mn + st * 3
+# p1 = history('600000.SH', '2_1', 'close', end=-1)
+# p2 = history('600000.SH', '2_1', 'close', start=1)
+# s = p2 / p1
+# # v = history('600000.SH', '2_1', 'volume', 733)
+#
+# st = std(s, time_period=100)
+# mn = mean(s, time_period=100)
+#
+# print s > mn + st * 3
 # std_p = ta.STDDEV(p, timeperiod=100)
 # std_v = ta.STDDEV(v, timeperiod=100)
+
+
+stocks1 = bi(0, '2_1', 'direction') == -1
+stocks2 = bi(0, '2_1', 'fractal_index_list')
+stocks3 = stocks2 & stocks1
+ret = {}
+for k, v in stocks3.items:
+    ret[k] = v[-1]
+
+print Result(ret)
+
+# a = np.array([1.0, 2.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0])
+# b = np.array([2.0, -4.0, 3.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0])
+# print np.corrcoef(a, b)

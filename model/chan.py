@@ -29,7 +29,7 @@ class Kline(Base):
         self.name = document['name']
         self.open = document['open'] / float(10000)
         self.transNum = document['transNum']
-        self.high = document['high']
+        self.high = document['high'] / float(10000)
         self.amount = document['amount'] / float(100)
         self.low = document['low'] / float(10000)
         self.cycDef = document['cycDef']

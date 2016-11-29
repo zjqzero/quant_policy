@@ -124,7 +124,7 @@ def level3(location, ktype, key, stocks=None):
 
 
 def history(wind_codes, ktype, key, start=0, end=None):
-    if isinstance(wind_codes, str):
+    if isinstance(wind_codes, (str, unicode)):
         wind_codes = [wind_codes]
     collection = client.chan.chankline
     ret = {}
@@ -134,8 +134,8 @@ def history(wind_codes, ktype, key, start=0, end=None):
             end = collection.find(condition).count()
         else:
             end = collection.find(condition).count() + end
-        condition.update({'index': {'$gte': start}})
-        cur = collection.find(condition).sort('index', pymongo.ASCENDING).limit(end - start)
+        condition.update({'index': {'$gte': end - start}})
+        cur = collection.find(condition).sort('index', pymongo.ASCENDING).limit(start)
         ret[wind_code] = np.array([getattr(ChanKline(e), 'kline')[key] for e in cur])
     return Result(ret)
 

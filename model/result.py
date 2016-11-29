@@ -103,3 +103,7 @@ class Result(object):
     @property
     def items(self):
         return self.data.items()
+
+    @property
+    def values(self):
+        return self.data.values()[0]
