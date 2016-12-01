@@ -48,18 +48,18 @@ all_stocks = {'600000.SH', '603009.SH', '002751.SZ', '600006.SH', '300055.SZ', '
 
 
 # 过滤最后一笔，日级别，k线数量大于20
-# print bi(0, '2_1', 'count_kline') > 20
+# print bi(-1, '2_1', 'count_kline') > 20
 
 # 过滤最后一段，日级别，比的数量=3
-# print duan(0, '2_1', 'count_subtrend') == 3
+# print duan(-1, '2_1', 'count_subtrend') == 3
 
 # 过滤比趋势背离，日级别
-# stock1 = bi(0, '2_1', 'ratio') < bi(-2, '2_1', 'ratio')
-# stock2 = bi(0, '2_1', 'shaped_high') < bi(-2, '2_1', 'shaped_high')
-# stock3 = bi(0, '2_1', 'shaped_low') < bi(-2, '2_1', 'shaped_low')
-# stock4 = (bi(-2, '2_1', 'ratio') / bi(0, '2_1', 'ratio')) >= 1.3
-# stock5 = bi(0, '2_1', 'direction') == -1
-# stock6 = bi(0, '2_1', 'count_fractal') > bi(-2, '2_1', 'count_fractal')
+# stock1 = bi(-1, '2_1', 'ratio') < bi(-3, '2_1', 'ratio')
+# stock2 = bi(-1, '2_1', 'shaped_high') < bi(-3, '2_1', 'shaped_high')
+# stock3 = bi(-1, '2_1', 'shaped_low') < bi(-3, '2_1', 'shaped_low')
+# stock4 = (bi(-3, '2_1', 'ratio') / bi(-1, '2_1', 'ratio')) >= 1.3
+# stock5 = bi(-1, '2_1', 'direction') == -1
+# stock6 = bi(-1, '2_1', 'count_fractal') > bi(-3, '2_1', 'count_fractal')
 #
 # print stock6 & stock2 & stock3 & stock5
 
@@ -78,8 +78,8 @@ all_stocks = {'600000.SH', '603009.SH', '002751.SZ', '600006.SH', '300055.SZ', '
 # std_v = ta.STDDEV(v, timeperiod=100)
 
 
-stocks1 = bi(0, '2_1', 'direction') == -1
-stocks2 = bi(0, '2_1', 'fractal_index_list')
+stocks1 = bi(-1, '2_1', 'direction') == -1
+stocks2 = bi(-1, '2_1', 'fractal_index_list')
 stocks3 = stocks2 & stocks1
 ret = {}
 for k, v in stocks3.items:

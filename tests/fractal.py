@@ -3,16 +3,16 @@ import numpy as np
 from query import chan_k, original_k, fractal, bi, duan, level1, level2, level3, centre, history, std, mean
 from model.result import Result
 
-stocks1 = bi(0, '2_1', 'direction') == -1
-stocks2 = bi(0, '2_1', 'chankline_index_list')
+stocks1 = bi(-1, '2_1', 'direction') == -1
+stocks2 = bi(-1, '2_1', 'chankline_index_list')
 stocks3 = stocks2 & stocks1
 ret = {}
 for wind_code, amount in stocks3.items:
     ret[wind_code] = amount[-1]
 
-# print chan_k(0, '2_1', 'index')
+# print chan_k(-1, '2_1', 'index')
 
-stock4 = (chan_k(0, '2_1', 'index') - Result(ret) + 1) * 240
+stock4 = (chan_k(-1, '2_1', 'index') - Result(ret) + 1) * 240
 
 ret = {}
 for wind_code, amount in stock4.items:

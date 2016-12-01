@@ -31,6 +31,8 @@ class Result(object):
         self.data = data
 
     def compare(self, other, op):
+        if not self.data:
+            return self
         if isinstance(other, (int, float, enumerate)):
             return Result({k: v for k, v in self.data.items() if OP_DICT[op](v, other)})
         elif isinstance(self.data.values()[0], np.ndarray):
@@ -106,4 +108,5 @@ class Result(object):
 
     @property
     def values(self):
+        """计算均值时，只能一个一个计算"""
         return self.data.values()[0]

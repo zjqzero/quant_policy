@@ -4,30 +4,46 @@ import numpy as np
 import talib as ta
 from database import client
 from model.chan import ChanKline, Trend, Centre, Fractal
+from _query import get_original_k, get_chan_k, get_centre, get_fractal, get_trend
 from model.result import Result
 
 all_stocks = {i['windCode'] for i in client.wind.wind_code.find()}
+all_stocks = {'600000.SH', '603009.SH', '002751.SZ', '600006.SH', '300055.SZ', '600054.SH'}
 
-COLLECTION_MAPPING = {
-    u'缠K线': 'chankline',
-    u'趋势': 'trend',
-    u'中枢': 'centre',
-    u'分型': 'fractal'
+CHAN_MAPPING = {
+    'original_k': client.chan.chankline,
+    'chan_k': client.chan.chankline,
+    'trend': client.chan.trend,
+    'fractal': client.chan.fractal,
+    'centre': client.chan.centre
 }
+
+FUNC_MAPPING = {
+    'original_k': get_original_k,
+    'chan_k': get_chan_k,
+    'trend': get_trend,
+    'fractal': get_fractal,
+    'centre': get_centre
+}
+
+
+def chan(chan_type, wind_code, ktype, abs_location, level=None, sort_key='index'):
+    condition = {'windCode': wind_code, 'ktype': ktype}
+    if level:
+        condition.update(level=level)
+    cur = CHAN_MAPPING[chan_type].find(condition).sort(sort_key, pymongo.DESCENDING).limit(abs_location)
+    return [e for e in cur]
 
 
 def original_k(location, ktype, key, stocks=None):
     stocks = stocks or all_stocks
     abs_location = abs(location)
     ret = {}
-    collection = client.chan.chankline
     for wind_code in stocks:
-        condition = {'windCode': wind_code, 'ktype': ktype}
-        cur = collection.find(condition).sort('index', pymongo.DESCENDING).limit(abs_location + 1)
-        chan_k_list = [ChanKline(e) for e in cur]
-        if not chan_k_list or len(chan_k_list) <= abs_location:
+        chan_k_list = [ChanKline(e) for e in chan('original_k', wind_code, ktype, abs_location)]
+        if not chan_k_list or len(chan_k_list) < abs_location:
             continue
-        ret[wind_code] = getattr(chan_k_list[abs_location], 'kline')[key]
+        ret[wind_code] = getattr(chan_k_list[abs_location - 1], 'kline')[key]
     return Result(ret)
 
 
@@ -35,14 +51,11 @@ def chan_k(location, ktype, key, stocks=None):
     stocks = stocks or all_stocks
     abs_location = abs(location)
     ret = {}
-    collection = client.chan.chankline
     for wind_code in stocks:
-        condition = {'windCode': wind_code, 'ktype': ktype}
-        cur = collection.find(condition).sort('index', pymongo.DESCENDING).limit(abs_location + 1)
-        chan_k_list = [ChanKline(e) for e in cur]
-        if not chan_k_list or len(chan_k_list) <= abs_location:
+        chan_k_list = [ChanKline(e) for e in chan('original_k', wind_code, ktype, abs_location)]
+        if not chan_k_list or len(chan_k_list) < abs_location:
             continue
-        ret[wind_code] = getattr(chan_k_list[abs_location], key)
+        ret[wind_code] = getattr(chan_k_list[abs_location - 1], key)
     return Result(ret)
 
 
@@ -50,14 +63,11 @@ def trend(location, ktype, key, level, stocks=None):
     stocks = stocks or all_stocks
     abs_location = abs(location)
     ret = {}
-    collection = client.chan.trend
     for wind_code in stocks:
-        condition = {'windCode': wind_code, 'ktype': ktype, 'level': level}
-        cur = collection.find(condition).sort('index', pymongo.DESCENDING).limit(abs_location + 1)
-        bi_list = [Trend(e) for e in cur]
-        if not bi_list or len(bi_list) <= abs_location:
+        trend_list = [Trend(e) for e in chan('trend', wind_code, ktype, abs_location, level)]
+        if not trend_list or len(trend_list) < abs_location:
             continue
-        ret[wind_code] = getattr(bi_list[abs_location], key)
+        ret[wind_code] = getattr(trend_list[abs_location - 1], key)
     return Result(ret)
 
 
@@ -65,14 +75,11 @@ def fractal(location, ktype, key, stocks=None):
     stocks = stocks or all_stocks
     abs_location = abs(location)
     ret = {}
-    collection = client.chan.fractal
     for wind_code in stocks:
-        condition = {'windCode': wind_code, 'ktype': ktype}
-        cur = collection.find(condition).sort('index', pymongo.DESCENDING).limit(abs_location + 1)
-        bi_list = [Fractal(e) for e in cur]
-        if not bi_list or len(bi_list) <= abs_location:
+        fractal_list = [Fractal(e) for e in chan('fractal', wind_code, ktype, abs_location)]
+        if not fractal_list or len(fractal_list) < abs_location:
             continue
-        ret[wind_code] = getattr(bi_list[abs_location], key)
+        ret[wind_code] = getattr(fractal_list[abs_location - 1], key)
     return Result(ret)
 
 
@@ -80,14 +87,11 @@ def centre(location, ktype, key, level, stocks=None):
     stocks = stocks or all_stocks
     abs_location = abs(location)
     ret = {}
-    collection = client.chan.centre
     for wind_code in stocks:
-        condition = {'windCode': wind_code, 'ktype': ktype, 'level': level}
-        cur = collection.find(condition).sort('index', pymongo.DESCENDING).limit(abs_location + 1)
-        bi_list = [Centre(e) for e in cur]
-        if not bi_list or len(bi_list) <= abs_location:
+        centre_list = [Centre(e) for e in chan('centre', wind_code, ktype, abs_location, level)]
+        if not centre_list or len(centre_list) < abs_location:
             continue
-        ret[wind_code] = getattr(bi_list[abs_location], key)
+        ret[wind_code] = getattr(centre_list[abs_location - 1], key)
     return Result(ret)
 
 
