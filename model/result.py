@@ -98,6 +98,9 @@ class Result(object):
     def __str__(self):
         return json.dumps(self.data, indent=4, cls=MyEncoder)
 
+    def __iter__(self):
+        return iter(self.wind_codes)
+
     @property
     def wind_codes(self):
         return self.data.keys()

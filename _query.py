@@ -3,9 +3,9 @@ from database import client
 from mod_base.cache import Cache
 from model.chan import ChanKline, Trend, Centre, Fractal, Kline
 from model.result import Result
+import time
 
 all_stocks = {i['windCode'] for i in client.wind.wind_code.find()}
-all_stocks = {'600000.SH', '603009.SH', '002751.SZ', '600006.SH', '300055.SZ', '600054.SH'}
 
 cache = Cache()
 limit = 15
@@ -19,6 +19,23 @@ def get_original_k(ktype):
         cur = client.chan.chankline.find(condition).sort('index', pymongo.DESCENDING).limit(limit)
         ret[wind_code] = [Kline(e['kline']) for e in cur]
     return ret
+
+
+@cache.memoize(timeout=30)
+def get_original_k_by_index(wind_codes, ktype, key):
+    """
+    :param wind_codes: Result objects
+    :param ktype:
+    :param key:
+    :return:
+    """
+    ret = {}
+    for wind_code, value in wind_codes.items:
+        condition = {'windCode': wind_code, 'ktype': ktype, 'index': value}
+        result = list(client.chan.chankline.find(condition).limit(1))
+        if len(result) == 1:
+            ret[wind_code] = result[0]['kline'][key]
+    return Result(ret)
 
 
 @cache.memoize(timeout=30)
@@ -41,12 +58,17 @@ def get_trend(ktype, level):
     return ret
 
 
+t1 = time.time()
+get_trend('2_1', '-1')
+print time.time() - t1
+
+
 @cache.memoize(timeout=30)
 def get_fractal(ktype):
     ret = {}
     for wind_code in all_stocks:
         condition = {'windCode': wind_code, 'ktype': ktype}
-        cur = client.chan.trend.find(condition).sort('index', pymongo.DESCENDING).limit(limit)
+        cur = client.chan.fractal.find(condition).sort('index', pymongo.DESCENDING).limit(limit)
         ret[wind_code] = [Fractal(e) for e in cur]
     return ret
 
@@ -56,7 +78,7 @@ def get_centre(ktype, level):
     ret = {}
     for wind_code in all_stocks:
         condition = {'windCode': wind_code, 'ktype': ktype, 'level': level}
-        cur = client.chan.trend.find(condition).sort('index', pymongo.DESCENDING).limit(limit)
+        cur = client.chan.centre.find(condition).sort('index', pymongo.DESCENDING).limit(limit)
         ret[wind_code] = [Centre(e) for e in cur]
     return ret
 

@@ -10,8 +10,6 @@ ret = {}
 for wind_code, amount in stocks3.items:
     ret[wind_code] = amount[-1]
 
-# print chan_k(-1, '2_1', 'index')
-
 stock4 = (chan_k(-1, '2_1', 'index') - Result(ret) + 1) * 240
 
 ret = {}

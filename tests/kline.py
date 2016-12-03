@@ -7,15 +7,10 @@ from model.result import Result
 
 t1 = time.time()
 stocks1 = bi(-1, '2_1', 'direction') == -1
-stocks2 = bi(-1, '2_1', 'chankline_index_list')
+stocks2 = bi(-1, '2_1', 'chankline_index_list', stocks1)
+stocks2_1 = bi(-1, '2_1', 'end_chan_k', stocks2)
 
-ret = {}
-for wind_code, v in stocks2.items:
-    ret[wind_code] = v[-1]
-
-last_index = Result(ret)
-
-stock3 = chan_k(-1, '2_1', 'index') - last_index <= 1
+stock3 = chan_k(-1, '2_1', 'index') - stocks2_1 <= 1
 stock5 = chan_k(-3, '2_1', 'inclusive') == 0
 
 stock4 = original_k(-1, '2_1', 'close') / original_k(-1, '2_1', 'open') > 1.03

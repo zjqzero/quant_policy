@@ -8,7 +8,7 @@ from _query import get_original_k, get_chan_k, get_centre, get_fractal, get_tren
 from model.result import Result
 
 all_stocks = {i['windCode'] for i in client.wind.wind_code.find()}
-all_stocks = {'600000.SH', '603009.SH', '002751.SZ', '600006.SH', '300055.SZ', '600054.SH'}
+
 
 CHAN_MAPPING = {
     'original_k': client.chan.chankline,
