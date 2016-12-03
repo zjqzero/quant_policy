@@ -150,3 +150,6 @@ def std(stocks, time_period):
 
 def mean(stocks, time_period):
     return Result({k: ta.MA(v, timeperiod=time_period) for k, v in stocks.items})
+
+
+# client.chan.chankline.find({'windCode': '600000.SH', 'ktype': '2_1'}).explain()

@@ -1,4 +1,6 @@
 import pymongo
+import talib as ta
+import numpy as np
 from database import client
 from mod_base.cache import Cache
 from model.chan import ChanKline, Trend, Centre, Fractal, Kline
@@ -56,11 +58,6 @@ def get_trend(ktype, level):
         cur = client.chan.trend.find(condition).sort('index', pymongo.DESCENDING).limit(limit)
         ret[wind_code] = [Trend(e) for e in cur]
     return ret
-
-
-t1 = time.time()
-get_trend('2_1', '-1')
-print time.time() - t1
 
 
 @cache.memoize(timeout=30)
@@ -166,3 +163,28 @@ def level2(location, ktype, key, stocks=None):
 
 def level3(location, ktype, key, stocks=None):
     return trend(location, ktype, key, '3', stocks)
+
+
+def history(wind_codes, ktype, key, start=0, end=None):
+    if isinstance(wind_codes, (str, unicode)):
+        wind_codes = [wind_codes]
+    collection = client.chan.chankline
+    ret = {}
+    for wind_code in wind_codes:
+        condition = {'windCode': wind_code, 'ktype': ktype}
+        if not end:
+            end = collection.find(condition).count()
+        else:
+            end = collection.find(condition).count() + end
+        condition.update({'index': {'$gte': end - start}})
+        cur = collection.find(condition).sort('index', pymongo.ASCENDING).limit(start)
+        ret[wind_code] = np.array([getattr(ChanKline(e), 'kline')[key] for e in cur])
+    return Result(ret)
+
+
+def std(stocks, time_period):
+    return Result({k: ta.STDDEV(v, timeperiod=time_period) for k, v in stocks.items})
+
+
+def mean(stocks, time_period):
+    return Result({k: ta.MA(v, timeperiod=time_period) for k, v in stocks.items})

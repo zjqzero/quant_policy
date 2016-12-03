@@ -2,6 +2,7 @@
 import operator
 import numpy as np
 import json
+from datetime import datetime
 
 np.seterr(invalid='ignore')
 
@@ -22,6 +23,8 @@ class MyEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, np.ndarray):
             return obj.tolist()
+        elif isinstance(obj, datetime):
+            return str(obj)
         else:
             return super(MyEncoder, self).default(obj)
 
