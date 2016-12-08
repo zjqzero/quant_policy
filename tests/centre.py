@@ -11,7 +11,19 @@ t1 = time.time()
 stocks_2 = level2(-1, '1_1', 'direction') == -1
 stocks_3 = level2(-1, '1_1', 'end_time', stocks_2)
 
-print stocks_3
+stocks_4_1 = centre(-1, '1_1', 'direction', '2', stocks_3) == -1
+stocks_4_2 = centre(-2, '1_1', 'direction', '2', stocks_4_1) == 1
+
+stocks_5_1 = (centre(-1, '1_1', 'zg', '2', stocks_4_2) + centre(-1, '1_1', 'zd', '2', stocks_4_2)) / 2
+stocks_5_2 = (centre(-2, '1_1', 'zg', '2', stocks_4_2) + centre(-2, '1_1', 'zd', '2', stocks_4_2)) / 2
+stocks_6 = stocks_5_1 > stocks_5_2
+
+stocks_7_1 = centre(-1, '1_1', 'gg', '2', stocks_4_2)
+
+stocks_8_1 = original_k(-1, '2_1', 'close', stocks_6) > stocks_7_1
+stocks_8_2 = original_k(-2, '2_1', 'close', stocks_6) < stocks_7_1
+
+print stocks_8_1 & stocks_8_2
 
 print time.time() - t1
 # 获取特定K线需要提供函数

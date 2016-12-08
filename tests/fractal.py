@@ -1,3 +1,5 @@
+# coding:utf-8
+# 日线最后一比向下，从最后一个chank开始，分钟级别计算量能和价格突破3个Σ外
 import talib as ta
 import numpy as np
 from query import chan_k, original_k, fractal, bi, duan, level1, level2, level3, centre, history, std, mean

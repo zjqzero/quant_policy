@@ -9,7 +9,6 @@ from model.result import Result
 
 all_stocks = {i['windCode'] for i in client.wind.wind_code.find()}
 
-
 CHAN_MAPPING = {
     'original_k': client.chan.chankline,
     'chan_k': client.chan.chankline,
@@ -131,14 +130,15 @@ def history(wind_codes, ktype, key, start=0, end=None):
     if isinstance(wind_codes, (str, unicode)):
         wind_codes = [wind_codes]
     collection = client.chan.chankline
+    start = abs(start)
     ret = {}
     for wind_code in wind_codes:
         condition = {'windCode': wind_code, 'ktype': ktype}
         if not end:
-            end = collection.find(condition).count()
+            _end = collection.find(condition).count()
         else:
-            end = collection.find(condition).count() + end
-        condition.update({'index': {'$gte': end - start}})
+            _end = collection.find(condition).count() + end
+        condition.update({'index': {'$gte': _end - start}})
         cur = collection.find(condition).sort('index', pymongo.ASCENDING).limit(start)
         ret[wind_code] = np.array([getattr(ChanKline(e), 'kline')[key] for e in cur])
     return Result(ret)
@@ -152,4 +152,6 @@ def mean(stocks, time_period):
     return Result({k: ta.MA(v, timeperiod=time_period) for k, v in stocks.items})
 
 
-# client.chan.chankline.find({'windCode': '600000.SH', 'ktype': '2_1'}).explain()
+stocks = bi(-1, '2_1', 'direction') == -1
+stocks_2 = history(stocks, '2_1', 'open', start=-5)
+print std(stocks_2, 2)

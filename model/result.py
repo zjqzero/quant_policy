@@ -115,4 +115,4 @@ class Result(object):
     @property
     def values(self):
         """计算均值时，只能一个一个计算"""
-        return self.data.values()[0]
+        return self.data.values()
