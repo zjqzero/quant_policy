@@ -1,3 +1,4 @@
+# coding: utf-8
 import pymongo
 import talib as ta
 import numpy as np
@@ -23,7 +24,7 @@ def get_original_k(ktype):
     return ret
 
 
-@cache.memoize(timeout=30)
+# @cache.memoize(timeout=30)
 def get_original_k_by_index(wind_codes, ktype, key):
     """
     :param wind_codes: Result objects
@@ -166,6 +167,39 @@ def level3(location, ktype, key, stocks=None):
 
 
 def history(wind_codes, ktype, key, start=0, end=None):
+    """
+    :param wind_codes: 股票代码范围
+    :param ktype: 级别 2_1表示日级别
+    :param key: 取出的关键字
+    :param start: index的起始，-1表示从右向左看第一颗缠k线
+    :param end: index的结束，-1表示从右向左看第一颗缠k线
+    :return:
+    """
+    if isinstance(wind_codes, (str, unicode)):
+        wind_codes = [wind_codes]
+    collection = client.chan.chankline
+    ret = {}
+    for wind_code in wind_codes:
+        condition = {'windCode': wind_code, 'ktype': ktype}
+        if not end:
+            _end = collection.find(condition).count()
+        else:
+            _end = collection.find(condition).count() + end
+        condition.update({'index': {'$gte': _end - start}})
+        cur = collection.find(condition).sort('index', pymongo.ASCENDING).limit(start)
+        ret[wind_code] = np.array([getattr(ChanKline(e), 'kline')[key] for e in cur])
+    return Result(ret)
+
+
+def history_by_date(wind_codes, ktype, key, start=0, end=None):
+    """
+    :param wind_codes: 股票代码范围
+    :param ktype: 级别 2_1表示日级别
+    :param key: 取出的关键字
+    :param start: 起始的缠k线时间
+    :param end: 结束的缠k线时间
+    :return:
+    """
     if isinstance(wind_codes, (str, unicode)):
         wind_codes = [wind_codes]
     collection = client.chan.chankline

@@ -150,8 +150,3 @@ def std(stocks, time_period):
 
 def mean(stocks, time_period):
     return Result({k: ta.MA(v, timeperiod=time_period) for k, v in stocks.items})
-
-
-stocks = bi(-1, '2_1', 'direction') == -1
-stocks_2 = history(stocks, '2_1', 'open', start=-5)
-print std(stocks_2, 2)
