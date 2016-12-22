@@ -441,7 +441,7 @@ class Cache(object):
                 updated = "{0}{1}{2}".format(altfname, keyargs, keykwargs)
             except AttributeError:
                 updated = "%s%s%s" % (altfname, keyargs, keykwargs)
-
+            print 'mk updated: ', updated
             cache_key = hashlib.md5()
             cache_key.update(updated.encode('utf-8'))
             cache_key = base64.b64encode(cache_key.digest())[:16]

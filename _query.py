@@ -1,12 +1,12 @@
 # coding: utf-8
+import numpy as np
 import pymongo
 import talib as ta
-import numpy as np
+
 from database import client
 from mod_base.cache import Cache
 from model.chan import ChanKline, Trend, Centre, Fractal, Kline
 from model.result import Result
-import time
 
 all_stocks = {i['windCode'] for i in client.wind.wind_code.find()}
 
@@ -22,23 +22,6 @@ def get_original_k(ktype):
         cur = client.chan.chankline.find(condition).sort('index', pymongo.DESCENDING).limit(limit)
         ret[wind_code] = [Kline(e['kline']) for e in cur]
     return ret
-
-
-# @cache.memoize(timeout=30)
-def get_original_k_by_index(wind_codes, ktype, key):
-    """
-    :param wind_codes: Result objects
-    :param ktype:
-    :param key:
-    :return:
-    """
-    ret = {}
-    for wind_code, value in wind_codes.items:
-        condition = {'windCode': wind_code, 'ktype': ktype, 'index': value}
-        result = list(client.chan.chankline.find(condition).limit(1))
-        if len(result) == 1:
-            ret[wind_code] = result[0]['kline'][key]
-    return Result(ret)
 
 
 @cache.memoize(timeout=30)
@@ -79,6 +62,20 @@ def get_centre(ktype, level):
         cur = client.chan.centre.find(condition).sort('index', pymongo.DESCENDING).limit(limit)
         ret[wind_code] = [Centre(e) for e in cur]
     return ret
+
+
+# @cache.memoize(timeout=30)
+# 不能使用cache，因为对象销毁重新分配的ID重复概率极大
+def original_k_by_index(wind_codes, ktype, key):
+    if isinstance(wind_codes, dict):
+        wind_codes = Result(wind_codes)
+    ret = {}
+    for wind_code, value in wind_codes.items:
+        condition = {'windCode': wind_code, 'ktype': ktype, 'index': value}
+        result = list(client.chan.chankline.find(condition).limit(1))
+        if len(result) == 1:
+            ret[wind_code] = getattr(Kline(result[0]['kline']), key)
+    return Result(ret)
 
 
 def original_k(location, ktype, key, stocks=None):

@@ -1,10 +1,9 @@
 # coding:utf-8
-import talib as ta
-import numpy as np
 import time
-from query import chan_k, original_k, fractal, bi, duan, level1, level2, level3, centre, history, std, mean
+
+from _query import original_k_by_index
 from model.result import Result
-from _query import get_original_k_by_index
+from query import chan_k, original_k, fractal
 
 t1 = time.time()
 
@@ -33,12 +32,11 @@ for k, v in stocks_1_4.items:
     max_index = chan_k(-1, '4_1', 'index', [k]).values
     close_price = []
     for i in range(max_index - v - 1):
-        close_price.append(get_original_k_by_index(Result({k: v + i}), '4_1', 'close').values)
+        close_price.append(original_k_by_index(Result({k: v + i}), '4_1', 'close').values)
     max_close = max(close_price)
     ret[k] = max_close
 
 stocks_5 = Result(ret)
-stocks_5 = stocks_5 / float(10000)
 
 # print stocks_5
 # print '################'
