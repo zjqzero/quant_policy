@@ -11,7 +11,7 @@ from model.result import Result
 all_stocks = {i['windCode'] for i in client.wind.wind_code.find()}
 
 cache = Cache()
-limit = 15
+limit = 100
 
 
 @cache.memoize(timeout=30)
