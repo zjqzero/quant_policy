@@ -5,6 +5,7 @@ from query import chan_k, original_k, fractal, bi, duan, level1, level2, level3,
 from model.result import Result
 
 price_amount = history('002695.SZ', '2_1', 'close', 1000)
+print price_amount
 ma5 = mean(price_amount, time_period=5)
 ma8 = mean(price_amount, time_period=8)
 ma13 = mean(price_amount, time_period=13)

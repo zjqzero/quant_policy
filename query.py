@@ -7,14 +7,14 @@ from model.chan import ChanKline, Trend, Centre, Fractal
 from _query import get_original_k, get_chan_k, get_centre, get_fractal, get_trend
 from model.result import Result
 
-all_stocks = {i['windCode'] for i in client.wind.wind_code.find()}
+all_stocks = {i['windCode'] for i in client.thsquant.code.find()}
 
 CHAN_MAPPING = {
-    'original_k': client.chan.chankline,
-    'chan_k': client.chan.chankline,
-    'trend': client.chan.trend,
-    'fractal': client.chan.fractal,
-    'centre': client.chan.centre
+    'original_k': client.thschan.chankline,
+    'chan_k': client.thschan.chankline,
+    'trend': client.thschan.trend,
+    'fractal': client.thschan.fractal,
+    'centre': client.thschan.centre
 }
 
 FUNC_MAPPING = {

@@ -24,16 +24,16 @@ class Kline(Base):
         super(Kline, self).__init__(document)
         self._id = document['_id']
         self.refillFlag = document['refillFlag']
-        self.volume = document['volume'] / float(100)
-        self.code = document['code']
+        self.volume = document['volume']
+        self.code = document['windCode']
         self.name = document['name']
-        self.open = document['open'] / float(10000)
+        self.open = document['open']
         self.transNum = document['transNum']
-        self.high = document['high'] / float(10000)
-        self.amount = document['amount'] / float(100)
-        self.low = document['low'] / float(10000)
+        self.high = document['high']
+        self.amount = document['amount']
+        self.low = document['low']
         self.cycDef = document['cycDef']
-        self.close = document['close'] / float(10000)
+        self.close = document['close']
         self.datetime = document['date']
         self.windCode = document['windCode']
         self.cycType = document['cycType']
@@ -64,8 +64,8 @@ class ChanKline(Base):
         - Up: 1
         - Down: -1
         """
-        self.shaped_high = document['shaped_high'] / float(10000)
-        self.shaped_low = document['shaped_low'] / float(10000)
+        self.shaped_high = document['shaped_high']
+        self.shaped_low = document['shaped_low']
         self.has_gap = document['has_gap']
         self.chankline_flag = document['chankline_flag']
         if document['trend_owner_dict'] is None: document['trend_owner_dict'] = {}
@@ -92,9 +92,8 @@ class Fractal(Base):
         self.chan_kline_index_list = document['chan_kline_index_list']
         self.eigen_chan_kline_index = document['eigen_chan_kline_index']
         self.fractal_interval = document['fractal_interval']
-        condition = {'windCode': self.windCode, 'ktype': self.ktype, 'index': self.eigen_chan_kline_index}
         # new properties
-        self.datetime = client.chan.chankline.find(condition).limit(1)[0]['datetime']
+        self.datetime = document['eigen_chan_kline_datetime']
 
 
 class Trend(Base):
@@ -134,10 +133,10 @@ class Trend(Base):
         - Up Reverse Inclusive: 2
         - Down Reverse Inclusive: -2
         """
-        self.high = document['high'] / float(10000)
-        self.low = document['low'] / float(10000)
-        self.shaped_high = document['shaped_high'] / float(10000)
-        self.shaped_low = document['shaped_low'] / float(10000)
+        self.high = document['high']
+        self.low = document['low']
+        self.shaped_high = document['shaped_high']
+        self.shaped_low = document['shaped_low']
         self.has_gap = document['has_gap']
         self.left_subtrend_index = document['left_subtrend_index']
         self.eigen_subtrend_index = document['eigen_subtrend_index']
@@ -193,10 +192,10 @@ class Centre(Base):
         self.dd_index = document['dd_index']
         self.zn_index_list = document['zn_index_list']
         self.owner_trend_index = document['owner_trend_index']
-        self.zg = document['zg'] / float(10000)
-        self.zd = document['zd'] / float(10000)
-        self.gg = document['gg'] / float(10000)
-        self.dd = document['dd'] / float(10000)
+        self.zg = document['zg']
+        self.zd = document['zd']
+        self.gg = document['gg']
+        self.dd = document['dd']
         self.start_time = document['start_time']
         self.end_time = document['end_time']
         self.trend_num = document['trend_num']
